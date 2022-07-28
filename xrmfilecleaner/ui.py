@@ -1,6 +1,7 @@
 from xrmfilecleaner.qt import *
 import xrmfilecleaner
 from xrmfilecleaner.help import get_resource
+from xrmfilecleaner.logger import log
 
 
 class SettingsDialog(QDialog):
@@ -38,15 +39,19 @@ class SettingsDialog(QDialog):
             val = default
 
         if isinstance(widget, QSpinBox):
+            widget.valueChanged.connect(lambda x: log.info(f"Setting {conf_par} to {x}"))
             widget.setValue(val)
             widget.valueChanged.connect(lambda x: self.conf.setValue(conf_par, x))
         elif isinstance(widget, QTimeEdit):
+            widget.timeChanged.connect(lambda x: log.info(f"Setting {conf_par} to {x.toString()}"))
             widget.setTime(val)
             widget.timeChanged.connect(lambda x: self.conf.setValue(conf_par, x))
         elif isinstance(widget, QCheckBox):
+            widget.stateChanged.connect(lambda x: log.info(f"Setting {conf_par} to {x}"))
             widget.setChecked(val)
             widget.stateChanged.connect(lambda x: self.conf.setValue(conf_par, x))
         elif isinstance(widget, QTextEdit):
+            widget.textChanged.connect(lambda: log.info(f"Setting {conf_par} to {widget.toPlainText()}"))
             widget.setText(val)
             widget.textChanged.connect(lambda: self.conf.setValue(conf_par, widget.toPlainText()))
         else:
